@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 ### 
 # IMPLEMENT ME! REPLACE WITH YOUR ANSWER TO PART 1B
-OPTIMAL_STEP_SIZE = 1.0
+OPTIMAL_STEP_SIZE = 0.125
 ###
 
 def _parse_args():
@@ -45,7 +45,29 @@ def quadratic_grad(x1, x2):
     2 * (x1 - 1),
     16 * (x2 - 1)
 ])
+'''
+using this function to keep track of the count when we reach the required distance, by restarting
+the origin for each experiment. Measure euclidean distance.
 
+'''
+def steps_to_target(lr, max_steps=10000):
+    point = np.array([0.0, 0.0])
+    optimum = np.array([1.0, 1.0])
+
+    for step in range(1, max_steps + 1):
+        gradient = quadratic_grad(point[0], point[1])
+        point = point - lr * gradient
+
+        distance = np.linalg.norm(point - optimum)
+
+        if distance <= 0.1:
+            return step
+
+        # Stop clearly unstable runs.
+        if not np.isfinite(distance) or distance > 1e12:
+            return None
+
+    return None
 
 def sgd_test_quadratic(args):
     xlist = np.linspace(-3.0, 3.0, 100)
